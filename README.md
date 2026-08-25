@@ -159,6 +159,7 @@ Current release is `0.2.0`. Both included examples build all the way through on 
 Same idea, different job — one thing done properly, nothing in the middle,
 and a result you can check:
 
+- [FrankenMarkdown](https://github.com/mystxcal/frankenmarkdown) — Markdown to PDF in one binary, no LaTeX or browser
 - [Flourite](https://github.com/mystxcal/flourite) — an agent harness for one hard task, with an auditable ledger
 
 The rest are listed on [my profile](https://github.com/mystxcal).
