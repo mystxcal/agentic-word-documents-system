@@ -1,0 +1,9 @@
+{
+  "$schema": "../../schemas/agentic-profile-v2.schema.json",
+  "schema": "agentic-profile/v2",
+  "id": "plain",
+  "shell": "shell.docx",
+  "body_slot": "AGDOC.BODY.PLAIN",
+  "field_bindings": {},
+  "release_gates": []
+}

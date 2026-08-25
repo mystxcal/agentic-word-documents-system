@@ -1,0 +1,12 @@
+{
+  "$schema": "../../schemas/agentic-project-v2.schema.json",
+  "schema": "agentic-project/v2",
+  "id": "workshop-kit",
+  "name": "Small Room Practice",
+  "description": "Neutral sample collection for practical learning handbooks.",
+  "metadata": {
+    "kind": "sample",
+    "format": "facilitator handbook"
+  },
+  "sources": {}
+}

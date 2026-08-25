@@ -1,0 +1,89 @@
+{
+  "$schema": "../../../../schemas/agentic-document-v2.schema.json",
+  "schema": "agentic-document/v2",
+  "id": "shade-study",
+  "project": "field-study",
+  "profile": "report",
+  "kit": "studio",
+  "metadata": {
+    "type": "Field Study",
+    "title": "Where the Shade Falls",
+    "short_title": "Where the Shade Falls",
+    "revision": "sample-01",
+    "date": "2026-08-24",
+    "author": "Example Research Team",
+    "description": "A compact observation report about how people choose places to pause. All observations are fictional demonstration data.",
+    "subject": "Observation-led public-space field report",
+    "keywords": ["field notes", "observation", "public space", "sample"]
+  },
+  "presentation": {
+    "styles": "kit:studio",
+    "cover": "document:cover",
+    "page_regions": {
+      "front": {
+        "header": "none",
+        "footer": "none",
+        "numbering": null,
+        "top_margin_twips": 720,
+        "bottom_margin_twips": 720,
+        "left_margin_twips": 900,
+        "right_margin_twips": 900
+      },
+      "main": {
+        "header": "kit:running-header",
+        "footer": "kit:folio-footer",
+        "numbering": {"style": "arabic", "start": 1, "page_count_scope": "region"},
+        "top_margin_twips": 1220,
+        "bottom_margin_twips": 1080,
+        "left_margin_twips": 1200,
+        "right_margin_twips": 1050
+      }
+    }
+  },
+  "sequence": [
+    {"region": "front", "items": ["cover"]},
+    {"region": "main", "items": ["toc", "body"]}
+  ],
+  "components": {
+    "cover": {
+      "type": "cover",
+      "ownership": "word_fragment",
+      "source": "presentation/cover.docx",
+      "source_tag": "AGDOC.COVER"
+    },
+    "toc": {"type": "toc", "toc_levels": 2},
+    "body": {
+      "type": "document",
+      "ownership": "source",
+      "source": "content/body.md",
+      "slots": {
+        "study-map": ["study-map"],
+        "observations": ["observations"]
+      }
+    },
+    "study-map": {
+      "type": "figure",
+      "ownership": "snapshot",
+      "source": "content/study-map.png",
+      "alignment": "center",
+      "caption": "Observation path and pause points",
+      "alt_text": "Diagram showing a walking path with four observation points",
+      "options": {"width_inches": 6.0}
+    },
+    "observations": {
+      "type": "table",
+      "ownership": "source",
+      "source": "content/observations.xlsx",
+      "options": {
+        "locator": {"table": "ObservationsData"},
+        "view": {"columns": "*", "style_role": "technical"},
+        "formula_policy": "require_no_formulas"
+      }
+    }
+  },
+  "outputs": {"basename": "Where the Shade Falls - Sample"},
+  "release": {
+    "gates": {"content-reviewed": "open", "visual-proof-reviewed": "open"},
+    "note": "Sample document; gates demonstrate release workflow and are intentionally open."
+  }
+}

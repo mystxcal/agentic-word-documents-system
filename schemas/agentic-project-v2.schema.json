@@ -1,0 +1,63 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "$Schema"
+    },
+    "schema": {
+      "const": "agentic-project/v2",
+      "title": "Schema",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "sources": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Sources",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "name"
+  ],
+  "title": "Agentic project manifest V2",
+  "type": "object",
+  "$id": "agentic-project-v2.schema.json"
+}

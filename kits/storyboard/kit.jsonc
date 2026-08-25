@@ -1,0 +1,71 @@
+{
+  "$schema": "../../schemas/agentic-kit-v2.schema.json",
+  "schema": "agentic-kit/v2",
+  "id": "storyboard",
+  "components": {
+    "storyboard": "donors/Style_Gallery.docx",
+    "running-header": "donors/Running_Header.docx",
+    "folio-footer": "donors/Folio_Footer.docx"
+  },
+  "semantic_styles": {
+    "heading_1": "Heading 1",
+    "heading_2": "Heading 2",
+    "heading_3": "Heading 3",
+    "heading_4": "Heading 4",
+    "heading_5": "Heading 5",
+    "heading_6": "Heading 6",
+    "body": "Normal",
+    "bullet": "List Bullet",
+    "numbered_step": "List Number",
+    "command": "Storyboard Cue",
+    "note": "Storyboard Callout",
+    "caption": "Caption"
+  },
+  "table_styles": {
+    "technical": {
+      "font_name": "Aptos",
+      "font_size_pt": 8.8,
+      "header_fill": "3D2B56",
+      "header_text": "FFFFFF",
+      "group_fill": "D75D45",
+      "group_text": "FFFFFF",
+      "body_fill": "FFFDF9",
+      "alternate_fill": "F7EFE8",
+      "border_color": "D9C7BC",
+      "text_color": "2A2430",
+      "cell_margin_twips": 96,
+      "repeat_header": true,
+      "allow_row_split": false
+    },
+    "schedule": {
+      "font_name": "Aptos",
+      "font_size_pt": 9.0,
+      "header_fill": "D75D45",
+      "header_text": "FFFFFF",
+      "group_fill": "EFCB68",
+      "group_text": "3D2B56",
+      "body_fill": "FFFDF9",
+      "alternate_fill": "F7EFE8",
+      "border_color": "D9C7BC",
+      "text_color": "2A2430",
+      "cell_margin_twips": 104,
+      "repeat_header": true,
+      "allow_row_split": false
+    },
+    "worksheet": {
+      "font_name": "Aptos",
+      "font_size_pt": 9.0,
+      "header_fill": "3D2B56",
+      "header_text": "FFFFFF",
+      "group_fill": "F0DDB2",
+      "group_text": "3D2B56",
+      "body_fill": "FFFDF9",
+      "alternate_fill": "FFFDF9",
+      "border_color": "BBAFA7",
+      "text_color": "2A2430",
+      "cell_margin_twips": 118,
+      "repeat_header": true,
+      "allow_row_split": false
+    }
+  }
+}

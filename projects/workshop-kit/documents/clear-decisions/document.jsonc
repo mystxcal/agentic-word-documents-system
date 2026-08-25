@@ -1,0 +1,98 @@
+{
+  "$schema": "../../../../schemas/agentic-document-v2.schema.json",
+  "schema": "agentic-document/v2",
+  "id": "clear-decisions",
+  "project": "workshop-kit",
+  "profile": "handbook",
+  "kit": "storyboard",
+  "metadata": {
+    "type": "Practice Handbook",
+    "title": "Make the Decision Visible",
+    "short_title": "Make the Decision Visible",
+    "revision": "sample-01",
+    "date": "2026-08-24",
+    "author": "Example Facilitation Studio",
+    "description": "A ninety-minute workshop pattern for turning a cloudy discussion into a decision people can repeat.",
+    "subject": "Facilitator practice guide",
+    "keywords": ["workshop", "facilitation", "decision making", "sample"]
+  },
+  "presentation": {
+    "styles": "kit:storyboard",
+    "cover": "document:cover",
+    "page_regions": {
+      "front": {
+        "header": "none",
+        "footer": "none",
+        "numbering": null,
+        "top_margin_twips": 660,
+        "bottom_margin_twips": 660,
+        "left_margin_twips": 840,
+        "right_margin_twips": 840
+      },
+      "main": {
+        "header": "kit:running-header",
+        "footer": "kit:folio-footer",
+        "numbering": {"style": "arabic", "start": 1, "page_count_scope": "region"},
+        "top_margin_twips": 1260,
+        "bottom_margin_twips": 1080,
+        "left_margin_twips": 1120,
+        "right_margin_twips": 1120
+      }
+    }
+  },
+  "sequence": [
+    {"region": "front", "items": ["cover"]},
+    {"region": "main", "items": ["toc", "body"]}
+  ],
+  "components": {
+    "cover": {
+      "type": "cover",
+      "ownership": "word_fragment",
+      "source": "presentation/cover.docx",
+      "source_tag": "AGDOC.COVER"
+    },
+    "toc": {"type": "toc", "toc_levels": 2},
+    "body": {
+      "type": "document",
+      "ownership": "source",
+      "source": "content/body.md",
+      "slots": {
+        "session-map": ["session-map"],
+        "run-of-show": ["run-of-show"],
+        "decision-canvas": ["decision-canvas"]
+      }
+    },
+    "session-map": {
+      "type": "figure",
+      "ownership": "snapshot",
+      "source": "content/session-map.png",
+      "alignment": "center",
+      "caption": "The session moves from evidence to choice to ownership",
+      "alt_text": "Three-stage workshop flow: reveal, shape, commit",
+      "options": {"width_inches": 6.15}
+    },
+    "run-of-show": {
+      "type": "table",
+      "ownership": "source",
+      "source": "content/run-of-show.xlsx",
+      "options": {
+        "locator": {"table": "RunOfShow"},
+        "view": {"columns": "*", "style_role": "schedule"},
+        "formula_policy": "require_no_formulas"
+      }
+    },
+    "decision-canvas": {
+      "type": "document",
+      "ownership": "word_fragment",
+      "source": "content/decision-canvas.docx",
+      "source_tag": "AGDOC.BODY.DECISION_CANVAS",
+      "allow_untagged": false,
+      "options": {"preserve_sections": false}
+    }
+  },
+  "outputs": {"basename": "Make the Decision Visible - Sample"},
+  "release": {
+    "gates": {"content-reviewed": "open", "visual-proof-reviewed": "open"},
+    "note": "Sample document; gates demonstrate release workflow and are intentionally open."
+  }
+}

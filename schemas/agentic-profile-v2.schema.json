@@ -1,0 +1,182 @@
+{
+  "$defs": {
+    "FieldBinding": {
+      "additionalProperties": true,
+      "properties": {
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template"
+        },
+        "date_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Format"
+        },
+        "transform": {
+          "anyOf": [
+            {
+              "enum": [
+                "upper",
+                "lower",
+                "title"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transform"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "title": "FieldBinding",
+      "type": "object"
+    },
+    "RegionStart": {
+      "additionalProperties": true,
+      "properties": {
+        "tag": {
+          "title": "Tag",
+          "type": "string"
+        },
+        "boundary": {
+          "default": "next_page",
+          "enum": [
+            "next_page",
+            "continuous"
+          ],
+          "title": "Boundary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag"
+      ],
+      "title": "RegionStart",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "$Schema"
+    },
+    "schema": {
+      "const": "agentic-profile/v2",
+      "title": "Schema",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "shell": {
+      "title": "Shell",
+      "type": "string"
+    },
+    "body_slot": {
+      "title": "Body Slot",
+      "type": "string"
+    },
+    "main_start_tag": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Main Start Tag"
+    },
+    "layout_boundary": {
+      "default": "next_page",
+      "enum": [
+        "next_page",
+        "continuous"
+      ],
+      "title": "Layout Boundary",
+      "type": "string"
+    },
+    "region_starts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/RegionStart"
+      },
+      "title": "Region Starts",
+      "type": "object"
+    },
+    "field_bindings": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/$defs/FieldBinding"
+          }
+        ]
+      },
+      "title": "Field Bindings",
+      "type": "object"
+    },
+    "release_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Release Gates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "shell",
+    "body_slot"
+  ],
+  "title": "Agentic document-profile manifest V2",
+  "type": "object",
+  "$id": "agentic-profile-v2.schema.json"
+}

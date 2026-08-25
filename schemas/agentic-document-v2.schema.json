@@ -1,0 +1,2308 @@
+{
+  "$defs": {
+    "CoverComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "cover",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "$ref": "#/$defs/Ownership"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/EmptyOptions"
+        }
+      },
+      "required": [
+        "type",
+        "ownership",
+        "source"
+      ],
+      "title": "CoverComponent",
+      "type": "object"
+    },
+    "DiagramComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "diagram",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "$ref": "#/$defs/Ownership"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/DiagramOptions"
+        }
+      },
+      "required": [
+        "type",
+        "ownership",
+        "source",
+        "options"
+      ],
+      "title": "DiagramComponent",
+      "type": "object"
+    },
+    "DiagramOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "rendition": {
+          "title": "Rendition",
+          "type": "string"
+        },
+        "rendition_of_sha256": {
+          "title": "Rendition Of Sha256",
+          "type": "string"
+        },
+        "width_inches": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width Inches"
+        }
+      },
+      "required": [
+        "rendition",
+        "rendition_of_sha256"
+      ],
+      "title": "DiagramOptions",
+      "type": "object"
+    },
+    "DocumentComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "document",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "$ref": "#/$defs/Ownership"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/DocumentOptions"
+        }
+      },
+      "required": [
+        "type",
+        "ownership",
+        "source"
+      ],
+      "title": "DocumentComponent",
+      "type": "object"
+    },
+    "DocumentMetadata": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "default": "Document",
+          "title": "Type",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "short_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Title"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "revision": {
+          "default": "draft",
+          "title": "Revision",
+          "type": "string"
+        },
+        "revision_display": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision Display"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "prepared_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prepared By"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "keywords": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keywords",
+          "type": "array"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        }
+      },
+      "required": [
+        "title",
+        "date"
+      ],
+      "title": "DocumentMetadata",
+      "type": "object"
+    },
+    "DocumentOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "preserve_sections": {
+          "default": false,
+          "title": "Preserve Sections",
+          "type": "boolean"
+        },
+        "whole_document": {
+          "default": false,
+          "title": "Whole Document",
+          "type": "boolean"
+        },
+        "strict": {
+          "default": true,
+          "title": "Strict",
+          "type": "boolean"
+        },
+        "style_roles": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Style Roles",
+          "type": "object"
+        },
+        "table_style_role": {
+          "default": "technical",
+          "title": "Table Style Role",
+          "type": "string"
+        }
+      },
+      "title": "DocumentOptions",
+      "type": "object"
+    },
+    "EmptyOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        }
+      },
+      "title": "EmptyOptions",
+      "type": "object"
+    },
+    "ExcelLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table"
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Range"
+        },
+        "has_headers": {
+          "default": true,
+          "title": "Has Headers",
+          "type": "boolean"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "ExcelLocator",
+      "type": "object"
+    },
+    "FigureComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "figure",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "$ref": "#/$defs/Ownership"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/FigureOptions"
+        }
+      },
+      "required": [
+        "type",
+        "ownership",
+        "source"
+      ],
+      "title": "FigureComponent",
+      "type": "object"
+    },
+    "FigureOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "width_inches": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width Inches"
+        }
+      },
+      "title": "FigureOptions",
+      "type": "object"
+    },
+    "GateState": {
+      "enum": [
+        "open",
+        "met",
+        "not_applicable"
+      ],
+      "title": "GateState",
+      "type": "string"
+    },
+    "HeaderFooterSelection": {
+      "additionalProperties": true,
+      "properties": {
+        "default": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First"
+        },
+        "even": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Even"
+        }
+      },
+      "title": "HeaderFooterSelection",
+      "type": "object"
+    },
+    "Numbering": {
+      "additionalProperties": true,
+      "properties": {
+        "style": {
+          "default": "arabic",
+          "enum": [
+            "arabic",
+            "roman_lower",
+            "roman_upper"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Start"
+        },
+        "page_count_scope": {
+          "default": "region",
+          "enum": [
+            "document",
+            "region"
+          ],
+          "title": "Page Count Scope",
+          "type": "string"
+        }
+      },
+      "title": "Numbering",
+      "type": "object"
+    },
+    "OutputNaming": {
+      "additionalProperties": true,
+      "properties": {
+        "basename": {
+          "title": "Basename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "basename"
+      ],
+      "title": "OutputNaming",
+      "type": "object"
+    },
+    "Ownership": {
+      "enum": [
+        "source",
+        "word_fragment",
+        "snapshot"
+      ],
+      "title": "Ownership",
+      "type": "string"
+    },
+    "PageBreakComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "page_break",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "default": null,
+          "title": "Ownership",
+          "type": "null"
+        },
+        "source": {
+          "default": null,
+          "title": "Source",
+          "type": "null"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/EmptyOptions"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "PageBreakComponent",
+      "type": "object"
+    },
+    "PageRegion": {
+      "additionalProperties": true,
+      "properties": {
+        "layout_mode": {
+          "default": "managed",
+          "enum": [
+            "managed",
+            "preserve"
+          ],
+          "title": "Layout Mode",
+          "type": "string"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/HeaderFooterSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header"
+        },
+        "footer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/HeaderFooterSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer"
+        },
+        "numbering": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Numbering"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "top_margin_twips": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top Margin Twips"
+        },
+        "bottom_margin_twips": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bottom Margin Twips"
+        },
+        "left_margin_twips": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Left Margin Twips"
+        },
+        "right_margin_twips": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Right Margin Twips"
+        }
+      },
+      "title": "PageRegion",
+      "type": "object"
+    },
+    "PdfPageRange": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "start": {
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "title": "End",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "PdfPageRange",
+      "type": "object"
+    },
+    "PdfPagesComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "pdf_pages",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "$ref": "#/$defs/Ownership"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/PdfPagesOptions"
+        }
+      },
+      "required": [
+        "type",
+        "ownership",
+        "source",
+        "options"
+      ],
+      "title": "PdfPagesComponent",
+      "type": "object"
+    },
+    "PdfPagesOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "pages": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "$ref": "#/$defs/PdfPageRange"
+              }
+            ]
+          },
+          "title": "Pages",
+          "type": "array"
+        },
+        "dpi": {
+          "default": 150,
+          "title": "Dpi",
+          "type": "integer"
+        },
+        "image_width_inches": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Width Inches"
+        },
+        "alignment": {
+          "default": "center",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "page_break_between": {
+          "default": true,
+          "title": "Page Break Between",
+          "type": "boolean"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "pages"
+      ],
+      "title": "PdfPagesOptions",
+      "type": "object"
+    },
+    "Presentation": {
+      "additionalProperties": true,
+      "properties": {
+        "styles": {
+          "title": "Styles",
+          "type": "string"
+        },
+        "cover": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cover"
+        },
+        "page_regions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PageRegion"
+          },
+          "title": "Page Regions",
+          "type": "object"
+        }
+      },
+      "required": [
+        "styles",
+        "page_regions"
+      ],
+      "title": "Presentation",
+      "type": "object"
+    },
+    "PreviewPolicy": {
+      "additionalProperties": true,
+      "description": "How one component behaves in a lightweight document preview.",
+      "properties": {
+        "mode": {
+          "enum": [
+            "include",
+            "placeholder",
+            "omit"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "title": "PreviewPolicy",
+      "type": "object"
+    },
+    "QualityPolicy": {
+      "additionalProperties": true,
+      "properties": {
+        "allow_blank_pages": {
+          "default": false,
+          "title": "Allow Blank Pages",
+          "type": "boolean"
+        }
+      },
+      "title": "QualityPolicy",
+      "type": "object"
+    },
+    "Reference": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "id",
+        "source"
+      ],
+      "title": "Reference",
+      "type": "object"
+    },
+    "ReleaseDeclaration": {
+      "additionalProperties": true,
+      "properties": {
+        "gates": {
+          "additionalProperties": {
+            "$ref": "#/$defs/GateState"
+          },
+          "title": "Gates",
+          "type": "object"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "ReleaseDeclaration",
+      "type": "object"
+    },
+    "SequenceGroup": {
+      "additionalProperties": true,
+      "properties": {
+        "region": {
+          "title": "Region",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "region",
+        "items"
+      ],
+      "title": "SequenceGroup",
+      "type": "object"
+    },
+    "TableColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "heading": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Heading"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "align": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Align"
+        },
+        "header_align": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Align"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "TableColumn",
+      "type": "object"
+    },
+    "TableComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "table",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "$ref": "#/$defs/Ownership"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/TableOptions"
+        }
+      },
+      "required": [
+        "type",
+        "ownership",
+        "source",
+        "options"
+      ],
+      "title": "TableComponent",
+      "type": "object"
+    },
+    "TableFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "column": {
+          "title": "Column",
+          "type": "string"
+        },
+        "op": {
+          "default": "eq",
+          "enum": [
+            "eq",
+            "ne",
+            "in",
+            "not_in",
+            "contains",
+            "not_blank",
+            "blank"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "column"
+      ],
+      "title": "TableFilter",
+      "type": "object"
+    },
+    "TableOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "locator": {
+          "$ref": "#/$defs/ExcelLocator"
+        },
+        "view": {
+          "$ref": "#/$defs/TableView"
+        },
+        "formula_policy": {
+          "default": "cached_values",
+          "enum": [
+            "cached_values",
+            "require_no_formulas",
+            "require_cached_results"
+          ],
+          "title": "Formula Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locator"
+      ],
+      "title": "TableOptions",
+      "type": "object"
+    },
+    "TableSort": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "column": {
+          "title": "Column",
+          "type": "string"
+        },
+        "direction": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "column"
+      ],
+      "title": "TableSort",
+      "type": "object"
+    },
+    "TableView": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "additionalProperties": true,
+          "title": "Extensions",
+          "type": "object"
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "const": "*",
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/TableColumn"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": "*",
+          "title": "Columns"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/$defs/TableFilter"
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "sort": {
+          "items": {
+            "$ref": "#/$defs/TableSort"
+          },
+          "title": "Sort",
+          "type": "array"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group By"
+        },
+        "row_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Id"
+        },
+        "style_role": {
+          "default": "technical",
+          "title": "Style Role",
+          "type": "string"
+        },
+        "empty_text": {
+          "default": "No rows selected.",
+          "title": "Empty Text",
+          "type": "string"
+        }
+      },
+      "title": "TableView",
+      "type": "object"
+    },
+    "TocComponent": {
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "toc",
+          "title": "Type",
+          "type": "string"
+        },
+        "ownership": {
+          "default": null,
+          "title": "Ownership",
+          "type": "null"
+        },
+        "source": {
+          "default": null,
+          "title": "Source",
+          "type": "null"
+        },
+        "source_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tag"
+        },
+        "allow_untagged": {
+          "default": false,
+          "title": "Allow Untagged",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "toc_levels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Toc Levels"
+        },
+        "alignment": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "based_on": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "title": "Based On",
+          "type": "array"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviewPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "slots": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Slots",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/EmptyOptions"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "TocComponent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "$Schema"
+    },
+    "schema": {
+      "const": "agentic-document/v2",
+      "title": "Schema",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "project": {
+      "title": "Project",
+      "type": "string"
+    },
+    "profile": {
+      "title": "Profile",
+      "type": "string"
+    },
+    "kit": {
+      "title": "Kit",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/DocumentMetadata"
+    },
+    "presentation": {
+      "$ref": "#/$defs/Presentation"
+    },
+    "sequence": {
+      "items": {
+        "$ref": "#/$defs/SequenceGroup"
+      },
+      "title": "Sequence",
+      "type": "array"
+    },
+    "components": {
+      "additionalProperties": {
+        "discriminator": {
+          "mapping": {
+            "cover": "#/$defs/CoverComponent",
+            "diagram": "#/$defs/DiagramComponent",
+            "document": "#/$defs/DocumentComponent",
+            "figure": "#/$defs/FigureComponent",
+            "page_break": "#/$defs/PageBreakComponent",
+            "pdf_pages": "#/$defs/PdfPagesComponent",
+            "table": "#/$defs/TableComponent",
+            "toc": "#/$defs/TocComponent"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/CoverComponent"
+          },
+          {
+            "$ref": "#/$defs/TocComponent"
+          },
+          {
+            "$ref": "#/$defs/DocumentComponent"
+          },
+          {
+            "$ref": "#/$defs/TableComponent"
+          },
+          {
+            "$ref": "#/$defs/FigureComponent"
+          },
+          {
+            "$ref": "#/$defs/DiagramComponent"
+          },
+          {
+            "$ref": "#/$defs/PdfPagesComponent"
+          },
+          {
+            "$ref": "#/$defs/PageBreakComponent"
+          }
+        ]
+      },
+      "title": "Components",
+      "type": "object"
+    },
+    "outputs": {
+      "$ref": "#/$defs/OutputNaming"
+    },
+    "quality": {
+      "$ref": "#/$defs/QualityPolicy"
+    },
+    "release": {
+      "$ref": "#/$defs/ReleaseDeclaration"
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "project",
+    "profile",
+    "kit",
+    "metadata",
+    "presentation",
+    "sequence",
+    "components",
+    "outputs"
+  ],
+  "title": "Agentic document manifest V2",
+  "type": "object",
+  "$id": "agentic-document-v2.schema.json"
+}

@@ -1,0 +1,790 @@
+<meta charset="utf-8">
+<title>Agentic Word Documents — banner</title>
+<style>
+  @font-face{font-family:"Display";src:url(__F_DISPLAY__) format("woff2");font-weight:200 900}
+  @font-face{font-family:"Text";src:url(__F_TEXT__) format("woff2");font-weight:200 900}
+  @font-face{font-family:"TextIt";src:url(__F_ITALIC__) format("woff2")}
+  @font-face{font-family:"UI";src:url(__F_UI__) format("woff2");font-weight:100 900}
+  @font-face{font-family:"Mono";src:url(__F_MONO__) format("woff2");font-weight:400 800}
+  /* Preview chrome only. Open this file in a browser and the loop plays live;
+     the capture never sees anything outside the canvas. */
+  html,body{margin:0;height:100%;background:#2a3034;display:grid;place-items:center}
+  canvas{display:block;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+</style>
+<canvas id="c"></canvas>
+<script>
+"use strict";
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Agentic Word Documents — README banner
+
+   The picture is the pipeline. Canonical sources on the left are routed, each
+   one to the single component it owns, into a Word-native page. Word finalizes
+   the fields. A PDF is exported, every page is rendered, and the proof ledger
+   closes. Then the bench clears and the next build begins.
+
+   Every frame is a pure function of `t`, so any frame is reproducible and the
+   loop closes exactly. Structure is drawn identically on every frame; only the
+   work moves. That is the right read — a bench that stays, a job that repeats —
+   and it also lets the GIF encoder difference most of the picture away.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+const W = 1280, H = 400;              // design units
+const SS = 2;                         // supersample factor, resolved on capture
+let   OUT = 1;                        // output scale: 1 = 1280x400, 2 = 2560x800
+const LOOP = 12.0;                    // seconds
+
+/* ── palette ───────────────────────────────────────────────────────────────
+   Lifted from the repository's own studio kit so the banner and the documents
+   it advertises speak one colour language.
+
+   Two palettes, deliberately. `P` is the bench — the ground, the labels, the
+   routing — and it inverts with the viewer's theme. `Q` is paper, and paper
+   does not invert: a printed sheet is the same sheet under any light. Anything
+   drawn onto a card, a page, or a page image reads from `Q`. */
+const Q = {
+  paper: "#FFFFFF", edge: "#D9E1E0", ink:  "#17242B", navy: "#17324D",
+  teal:  "#1E7A78", gold: "#D8A84E", mint: "#EAF3F1", rule: "#C2CED1",
+  mute:  "#5C6E76", faint:"#A2B2B6", plum: "#4B3A62"
+};
+const THEMES = {
+  light: {
+    field: "#F1F3F1", grid: "#E5EAE8", crop:  "#C4CFD0", rule:  "#C2CED1",
+    ink:   "#17242B", mute: "#5C6E76", faint: "#A2B2B6",
+    navy:  "#17324D", teal: "#1E7A78", gold:  "#D8A84E", plum:  "#4B3A62",
+    paper: "#FFFFFF", onDark: "#FFFFFF", shadow: "rgba(23,50,77,.11)"
+  },
+  dark: {
+    field: "#0E1416", grid: "#182125", crop:  "#33454B", rule:  "#2C3C42",
+    ink:   "#DCE5E7", mute: "#84969C", faint: "#5A6C73",
+    navy:  "#93B9DC", teal: "#4CC0B2", gold:  "#E3B863", plum:  "#A996C4",
+    paper: "#F6F6F3", onDark: "#0E1416", shadow: "rgba(0,0,0,.5)"
+  }
+};
+let P = THEMES.light;
+
+const cv = document.getElementById("c");
+const g = cv.getContext("2d", { alpha: false });
+/* Device pixels per design unit. Canvas shadow blur and offset are specified in
+   device space and are NOT touched by the transform, so they are scaled here by
+   hand; every other length is in design units and scales with the transform. */
+let DPU = SS;
+function sizeTo(scale){
+  OUT = scale;
+  DPU = SS * OUT;
+  cv.width = W * DPU; cv.height = H * DPU;
+  cv.style.width = (W * OUT) + "px"; cv.style.height = (H * OUT) + "px";
+}
+sizeTo(1);
+
+/* ── easing ────────────────────────────────────────────────────────────── */
+const cl  = x => x < 0 ? 0 : x > 1 ? 1 : x;
+const lin = (a, b, t) => cl((t - a) / (b - a));
+const sm  = (a, b, t) => { const x = lin(a, b, t); return x * x * (3 - 2 * x); };
+const eo  = (a, b, t) => { const x = lin(a, b, t); return 1 - Math.pow(1 - x, 3); };
+const ei  = (a, b, t) => { const x = lin(a, b, t); return x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3)/2; };
+const mix = (a, b, k) => a + (b - a) * k;
+const hx  = c => [1, 3, 5].map(i => parseInt(c.substr(i, 2), 16));
+function mixHex(a, b, k){
+  const x = hx(a), y = hx(b);
+  return "rgb(" + x.map((v, i) => Math.round(mix(v, y[i], k))).join(",") + ")";
+}
+
+/* ── primitives ────────────────────────────────────────────────────────── */
+function rr(x, y, w, h, r){
+  r = Math.min(r, w / 2, h / 2);
+  g.beginPath();
+  g.moveTo(x + r, y);
+  g.arcTo(x + w, y,     x + w, y + h, r);
+  g.arcTo(x + w, y + h, x,     y + h, r);
+  g.arcTo(x,     y + h, x,     y,     r);
+  g.arcTo(x,     y,     x + w, y,     r);
+  g.closePath();
+}
+function fillRR(x, y, w, h, r, c){ g.fillStyle = c; rr(x, y, w, h, r); g.fill(); }
+function strokeRR(x, y, w, h, r, c, lw){ g.strokeStyle = c; g.lineWidth = lw || 1; rr(x, y, w, h, r); g.stroke(); }
+function box(x, y, w, h, c){ if (w <= 0 || h <= 0) return; g.fillStyle = c; g.fillRect(x, y, w, h); }
+function hair(x1, y1, x2, y2, c, lw){
+  g.strokeStyle = c; g.lineWidth = lw || 1;
+  g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+}
+function clipTo(x, y, w, h, fn){ g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); fn(); g.restore(); }
+
+const FAM = { d: "Display", t: "Text", i: "TextIt", u: "UI", m: "Mono" };
+/* `ls` is tracking in ems, the way a type spec states it. */
+function applyFont(o){
+  g.font = (o.w || 400) + " " + (o.s || 11) + "px " + FAM[o.f || "u"];
+  g.letterSpacing = ((o.ls || 0) * (o.s || 11)).toFixed(3) + "px";
+}
+function txt(s, x, y, o){
+  o = o || {};
+  applyFont(o);
+  g.fillStyle = o.c || P.ink;
+  g.textAlign = o.a || "left";
+  g.textBaseline = "alphabetic";
+  g.fillText(s, x, y);
+  g.letterSpacing = "0px";
+  g.textAlign = "left";
+}
+function measure(s, o){
+  applyFont(o || {});
+  const m = g.measureText(s).width;
+  g.letterSpacing = "0px";
+  return m;
+}
+/* alpha-scoped drawing, so a fading element cannot leak into the next stroke */
+function at(a, fn){ if (a <= 0.003) return; const o = g.globalAlpha; g.globalAlpha = o * a; fn(); g.globalAlpha = o; }
+
+/* deterministic noise: "random" detail is identical on every render */
+function rnd(i){ const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+/* ── layout ────────────────────────────────────────────────────────────────
+   Four columns: identity, sources, the document, the proof. One table of
+   numbers; nothing below invents geometry of its own. */
+const L = {
+  name:  { x: 44,  w: 372 },
+  top:   38,
+  src:   { x: 470, y: 48, w: 212, h: 58, gap: 16, n: 4 },
+  rail:  { x0: 682 },
+  doc:   { x: 752, y: 48, w: 204, h: 288 },
+  out:   { x: 986, w: 249 },
+  thumb: { x: 986, y: 48, w: 34, h: 48, gx: 9, gy: 9, cols: 6, n: 12 },
+  ledg:  { x: 986, x2: 1116, y: 198, rowH: 19 },
+  stage: { x: 470, x2: 1236, y: 350, label: 366 },
+  foot:  382
+};
+const CARD_Y = i => L.src.y + i * (L.src.h + L.src.gap);      // 48 .. 328
+
+/* ── the sources ───────────────────────────────────────────────────────────
+   Four canonical owners, four genuinely different internal textures. The
+   colour a card carries is the colour its route and its component will take.
+   `ord` is manifest sequence, not list order: the page assembles top down even
+   though Markdown+ is listed first. */
+const SOURCES = [
+  { file: "content/observations.md", kind: "MARKDOWN+",     col: "teal", ord: 1 },
+  { file: "data/counts.xlsx",        kind: "EXCEL TABLE",   col: "navy", ord: 2 },
+  { file: "fragments/cover.docx",    kind: "WORD FRAGMENT", col: "gold", ord: 0 },
+  { file: "figures/site-map.png",    kind: "FIGURE",        col: "plum", ord: 3 }
+];
+
+/* Where each source lands in the page. This is the ownership rule, drawn. */
+const COMP = [
+  { y: 148, h: 33 },   // body prose         ← Markdown+
+  { y: 190, h: 28 },   // maintained table   ← Excel
+  { y: 18,  h: 82 },   // cover + meta band  ← Word fragment
+  { y: 228, h: 23 }    // figure             ← image
+];
+
+const LEDGER_A = ["PACKAGE", "FIELDS", "BASELINES", "PDF EXPORT"];
+const LEDGER_B = ["PAGES", "METADATA", "NO BROKEN FIELDS", "HASHES"];
+const STAGES = ["RESOLVE", "COMPILE", "ASSEMBLE", "FINALIZE", "EXPORT", "RENDER", "VERIFY", "PROMOTE"];
+
+/* ── beats ─────────────────────────────────────────────────────────────────
+   Read this block to know what the banner is doing at any second. */
+const B = {
+  card:  [0.15, 2.05],   // sources draw themselves in, staggered
+  rail:  [1.70, 2.60],   // routes light
+  token: [2.10, 5.30],   // ownership travels; each landing builds its component
+  furn:  [5.05, 6.10],   // page furniture and the TOC skeleton
+  field: [6.05, 7.35],   // Word finalization; PAGEREF results resolve
+  pdf:   [7.30, 8.45],   // export
+  page:  [8.25, 9.75],   // every page rendered
+  proof: [9.00, 10.45],  // ledger closes, hash settles
+  clear: [11.20, 11.88]  // the bench clears for the next build
+};
+/* Per-item stagger inside a beat. */
+const stagger = (i, a, b, n, span) => {
+  const step = (b - a - span) / Math.max(1, n - 1);
+  return [a + i * step, a + i * step + span];
+};
+
+/* The reset travels right to left; anything to its right is already gone. */
+function wipe(t, x){
+  if (t < B.clear[0]) return 1;
+  const edge = mix(W + 70, L.src.x - 40, ei(B.clear[0], B.clear[1], t));
+  return 1 - sm(edge - 84, edge + 10, x);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STATIC SCAFFOLD — identical on every frame
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function drawGround(){
+  box(0, 0, W, H, P.field);
+  g.strokeStyle = P.grid; g.lineWidth = 1;
+  g.beginPath();
+  for (let x = 20; x < W; x += 20){ g.moveTo(x + .5, 0); g.lineTo(x + .5, H); }
+  for (let y = 20; y < H; y += 20){ g.moveTo(0, y + .5); g.lineTo(W, y + .5); }
+  g.stroke();
+
+  // crop marks — a proof sheet knows where it will be trimmed
+  const m = 13, k = 10;
+  g.strokeStyle = P.crop; g.lineWidth = 1;
+  [[m, m, 1, 1], [W - m, m, -1, 1], [m, H - m, 1, -1], [W - m, H - m, -1, -1]].forEach(([x, y, sx, sy]) => {
+    g.beginPath();
+    g.moveTo(x + .5, y + .5); g.lineTo(x + .5 + sx * k, y + .5);
+    g.moveTo(x + .5, y + .5); g.lineTo(x + .5, y + .5 + sy * k);
+    g.stroke();
+  });
+}
+
+/* The mark: three sources of unequal measure, bracketed into one page. */
+function drawMark(x, y, s){
+  const u = s / 22;
+  [[1, 8, P.teal], [8.5, 5.5, P.gold], [16, 8, P.navy]]
+    .forEach(([by, bw, c]) => box(x, y + by * u, bw * u, 3 * u, c));
+  g.strokeStyle = P.rule; g.lineWidth = Math.max(1, 1.3 * u);
+  g.beginPath();
+  g.moveTo(x + 9.4 * u, y + 2.5 * u); g.lineTo(x + 11.4 * u, y + 2.5 * u);
+  g.lineTo(x + 11.4 * u, y + 19.5 * u); g.lineTo(x + 9.4 * u, y + 19.5 * u);
+  g.moveTo(x + 11.4 * u, y + 11 * u); g.lineTo(x + 13.6 * u, y + 11 * u);
+  g.stroke();
+  fillRR(x + 14 * u, y, 8 * u, 22 * u, 1 * u, P.navy);
+  box(x + 15.5 * u, y + 3 * u, 5 * u, 1.7 * u, P.teal);
+  at(.5,  () => box(x + 15.5 * u, y + 7.4 * u, 5 * u, 1 * u, P.field));
+  at(.36, () => box(x + 15.5 * u, y + 10.4 * u, 3.4 * u, 1 * u, P.field));
+  at(.36, () => box(x + 15.5 * u, y + 13.4 * u, 5 * u, 1 * u, P.field));
+  box(x + 15.5 * u, y + 17.3 * u, 5 * u, 1.7 * u, P.gold);
+}
+
+function drawNameBlock(){
+  const N = L.name;
+  drawMark(N.x, 44, 22);
+  txt("agentic-doc", N.x + 32, 60, { f: "m", s: 11.5, w: 500, ls: .015, c: P.teal });
+
+  ["Agentic", "Word", "Documents"].forEach((s, i) =>
+    txt(s, N.x - 1, 130 + i * 53, { f: "d", s: 54, w: 620, ls: -.015, c: P.navy }));
+
+  // the kit's own split rule: a gold measure against a pale remainder
+  box(N.x, 258, N.w * .52, 2.5, P.gold);
+  box(N.x + N.w * .52, 258, N.w * .48, 2.5, P.rule);
+
+  txt("A composable document compiler.", N.x, 287, { f: "i", s: 17, c: P.ink });
+  txt("Markdown+ · Excel · Word fragments · figures · PDF pages",
+      N.x, 313, { f: "u", s: 12, w: 450, c: P.mute });
+  txt("Editable .docx · native fields · verified PDF · immutable proof",
+      N.x, 331, { f: "u", s: 12, w: 450, c: P.mute });
+
+  txt("MIT · PYTHON 3.12+ · WINDOWS + MICROSOFT WORD",
+      N.x, L.foot, { f: "u", s: 8.5, w: 600, ls: .1, c: P.faint });
+}
+
+function colLabel(s, x, tag, tagX){
+  txt(s, x, L.top, { f: "u", s: 9.5, w: 600, ls: .13, c: P.teal });
+  if (tag) txt(tag, tagX, L.top, { f: "m", s: 9.5, w: 500, c: P.faint, a: "right" });
+}
+
+/* Source card: shell, filename, kind chip. Its contents arrive later. */
+function drawCardShell(i){
+  const S = L.src, y = CARD_Y(i), s = SOURCES[i];
+  g.save();
+  g.shadowColor = P.shadow; g.shadowBlur = 7 * DPU; g.shadowOffsetY = 2 * DPU;
+  fillRR(S.x, y, S.w, S.h, 2.5, Q.paper);
+  g.restore();
+  strokeRR(S.x + .5, y + .5, S.w - 1, S.h - 1, 2.5, Q.edge, 1);
+  box(S.x, y + 1, 3, S.h - 2, Q[s.col]);                       // ownership spine
+
+  const cut = s.file.lastIndexOf("/") + 1;
+  txt(s.file.slice(0, cut), S.x + 13, y + 18, { f: "m", s: 8.5, w: 400, c: Q.faint });
+  txt(s.file.slice(cut), S.x + 13 + measure(s.file.slice(0, cut), { f: "m", s: 8.5, w: 400 }),
+      y + 18, { f: "m", s: 8.5, w: 500, c: Q.ink });
+  const kw = measure(s.kind, { f: "u", s: 7.6, w: 600, ls: .07 }) + 12;
+  fillRR(S.x + S.w - 9 - kw, y + 7, kw, 14, 1.5, Q.mint);
+  txt(s.kind, S.x + S.w - 9 - kw / 2, y + 17.3,
+      { f: "u", s: 7.6, w: 600, ls: .07, c: Q.teal, a: "center" });
+}
+
+function drawSheetShell(){
+  const D = L.doc;
+  g.save();
+  g.shadowColor = P.shadow; g.shadowBlur = 14 * DPU; g.shadowOffsetY = 4 * DPU;
+  fillRR(D.x, D.y, D.w, D.h, 2, Q.paper);
+  g.restore();
+  strokeRR(D.x + .5, D.y + .5, D.w - 1, D.h - 1, 2, Q.edge, 1);
+}
+
+function drawStageRail(){
+  const S = L.stage, span = (S.x2 - S.x) / STAGES.length;
+  hair(S.x, S.y + .5, S.x2, S.y + .5, P.rule, 1);
+  STAGES.forEach((s, i) => {
+    const x = S.x + i * span;
+    box(x, S.y - 3, 1, 4, P.rule);
+    txt(s, x, S.label, { f: "u", s: 9, w: 500, ls: .11, c: P.faint });
+  });
+  box(S.x2 - 1, S.y - 3, 1, 4, P.rule);
+}
+
+function drawScaffold(){
+  drawGround();
+  drawNameBlock();
+
+  colLabel("CANONICAL SOURCES", L.src.x);
+  colLabel("WORD-NATIVE ASSEMBLY", L.doc.x, ".docx", L.doc.x + L.doc.w);
+  colLabel("VERIFIED OUTPUT", L.out.x, ".pdf", L.out.x + L.out.w);
+
+  for (let i = 0; i < L.src.n; i++) drawCardShell(i);
+  drawRails(0, true);                                   // the empty route bed
+  drawSheetShell();
+
+  // page slots on the contact sheet
+  for (let i = 0; i < L.thumb.n; i++){
+    const p = thumbPos(i);
+    at(.75, () => strokeRR(p.x + .5, p.y + .5, L.thumb.w - 1, L.thumb.h - 1, 1.5, P.rule, 1));
+  }
+
+  // ledger boxes and labels
+  ledgerRows().forEach(r => {
+    strokeRR(r.x + .5, r.y + .5, 11, 11, 1.5, P.rule, 1);
+    txt(r.label, r.x + 18, r.y + 9.5, { f: "u", s: 9, w: 500, ls: .03, c: P.mute });
+  });
+
+  hair(443.5, 30, 443.5, 356, P.rule, 1);
+  drawStageRail();
+
+  // press colour bar, bottom right
+  const sw = [Q.navy, Q.teal, Q.gold, Q.plum, Q.mint];
+  const bw = 15, x0 = W - 44 - sw.length * bw;
+  box(x0 - 3, L.foot - 11, sw.length * bw + 4, 13, Q.paper);
+  sw.forEach((c, i) => box(x0 + i * bw, L.foot - 8, bw - 2, 7, c));
+  strokeRR(x0 - 3.5, L.foot - 11.5, sw.length * bw + 5, 14, 0, P.rule, 1);
+  txt("PROOF", x0 - 9, L.foot - 1.5, { f: "u", s: 8.5, w: 600, ls: .1, c: P.faint, a: "right" });
+}
+
+function thumbPos(i){
+  const T = L.thumb;
+  return { x: T.x + (i % T.cols) * (T.w + T.gx),
+           y: T.y + Math.floor(i / T.cols) * (T.h + T.gy) };
+}
+function ledgerRows(){
+  const out = [];
+  LEDGER_A.forEach((s, i) => out.push({ x: L.ledg.x,  y: L.ledg.y + i * L.ledg.rowH, label: s }));
+  LEDGER_B.forEach((s, i) => out.push({ x: L.ledg.x2, y: L.ledg.y + i * L.ledg.rowH, label: s }));
+  return out;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ANIMATED CONTENT
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Each source type looks like what it is. */
+function cardTexture(i, k){
+  const S = L.src, y = CARD_Y(i) + 30, x = S.x + 13, w = S.w - 30;
+  clipTo(x, y - 5, w * k, 28, () => {
+    if (i === 0){                       // Markdown+: a heading, then ruled prose
+      box(x, y, 20, 3.2, Q.teal);
+      box(x + 25, y, 46, 3.2, Q.rule);
+      [0, 1, 2].forEach(r => box(x, y + 9 + r * 5, [w, w * .92, w * .55][r], 1.5, Q.rule));
+    } else if (i === 1){                // Excel: an arbitrary table, any columns
+      const cw = w / 6, ch = 5.4;
+      box(x, y, w, ch, Q.navy);
+      for (let r = 1; r < 4; r++) box(x, y + r * ch, w, ch, r % 2 ? Q.mint : Q.paper);
+      g.strokeStyle = Q.rule; g.lineWidth = .7;
+      g.beginPath();
+      for (let c = 1; c < 6; c++){ g.moveTo(x + c * cw, y); g.lineTo(x + c * cw, y + ch * 4); }
+      for (let r = 1; r < 4; r++){ g.moveTo(x, y + r * ch); g.lineTo(x + w, y + r * ch); }
+      g.stroke();
+      strokeRR(x + .5, y + .5, w - 1, ch * 4 - 1, 0, Q.rule, 1);
+      box(x, y + ch, w, .8, Q.rule);
+    } else if (i === 2){                // Word fragment: a designed block
+      box(x, y - 1, w * .58, 22, Q.mint);
+      box(x + 6, y + 3, 28, 3.4, Q.gold);
+      box(x + 6, y + 10, w * .42, 1.5, Q.rule);
+      box(x + 6, y + 14.5, w * .3, 1.5, Q.rule);
+      box(x + w * .64, y - 1, 1, 22, Q.rule);
+      box(x + w * .64 + 7, y + 3, w * .3, 1.5, Q.rule);
+      box(x + w * .64 + 7, y + 8, w * .22, 1.5, Q.rule);
+      box(x + w * .64 + 7, y + 13, w * .27, 1.5, Q.rule);
+    } else {                            // Figure: a reviewed illustration
+      strokeRR(x + .5, y + .5, 42, 18, 1, Q.rule, 1);
+      clipTo(x + 1, y + 1, 41, 17, () => {
+        g.strokeStyle = Q.mute; g.lineWidth = 1; g.globalAlpha *= .55;
+        g.beginPath();
+        g.moveTo(x + 3, y + 16); g.lineTo(x + 16, y + 6);
+        g.lineTo(x + 26, y + 12); g.lineTo(x + 41, y + 3);
+        g.stroke();
+      });
+      box(x + 50, y + 3, w - 62, 1.5, Q.rule);
+      box(x + 50, y + 8.5, w - 78, 1.5, Q.rule);
+      box(x + 50, y + 15, 26, 1.5, Q.mute);
+    }
+  });
+}
+
+/* Routes: orthogonal, one per source, landing at the component it owns. */
+function railPath(i){
+  const S = L.src;
+  return {
+    x0: S.x + S.w, y0: CARD_Y(i) + S.h / 2,
+    bend: L.rail.x0 + 10 + i * 14,
+    x1: L.doc.x, y1: L.doc.y + COMP[i].y + COMP[i].h / 2
+  };
+}
+/* Walks the route at constant speed — `k` must not stall in the corners — and
+   draws it with rounded elbows, the way a routed trace is actually drawn. */
+function tracePath(p, k){
+  const pts = Math.abs(p.y1 - p.y0) < .5
+    ? [[p.x0, p.y0], [p.x1, p.y1]]
+    : [[p.x0, p.y0], [p.bend, p.y0], [p.bend, p.y1], [p.x1, p.y1]];
+  const seg = [];
+  let T = 0;
+  for (let i = 1; i < pts.length; i++){
+    const l = Math.abs(pts[i][0] - pts[i - 1][0]) + Math.abs(pts[i][1] - pts[i - 1][1]);
+    seg.push(l); T += l;
+  }
+  let d = T * k, head = pts[0];
+  const run = [pts[0]];
+  for (let i = 0; i < seg.length; i++){
+    if (d >= seg[i] - 1e-6){ d -= seg[i]; head = pts[i + 1]; run.push(head); continue; }
+    const f = seg[i] ? d / seg[i] : 0;
+    head = [pts[i][0] + (pts[i + 1][0] - pts[i][0]) * f,
+            pts[i][1] + (pts[i + 1][1] - pts[i][1]) * f];
+    run.push(head);
+    break;
+  }
+  g.beginPath();
+  g.moveTo(run[0][0], run[0][1]);
+  for (let i = 1; i < run.length - 1; i++) g.arcTo(run[i][0], run[i][1], run[i + 1][0], run[i + 1][1], 7);
+  g.lineTo(run[run.length - 1][0], run[run.length - 1][1]);
+  return { x: head[0], y: head[1] };
+}
+function drawRails(t, bed){
+  g.lineJoin = "round"; g.lineCap = "butt";
+  for (let i = 0; i < L.src.n; i++){
+    const p = railPath(i);
+    if (bed){
+      at(.55, () => {
+        g.strokeStyle = P.rule; g.lineWidth = 1;
+        tracePath(p, 1); g.stroke();
+        g.fillStyle = P.rule;
+        g.beginPath(); g.arc(p.x0, p.y0, 1.8, 0, 6.2832); g.fill();
+      });
+      continue;
+    }
+    const [a, b] = stagger(i, B.rail[0], B.rail[1], L.src.n, .55);
+    const k = eo(a, b, t);
+    if (k <= 0) continue;
+    at(wipe(t, p.bend) * .6, () => {
+      g.strokeStyle = P[SOURCES[i].col]; g.lineWidth = 1.5;
+      tracePath(p, k); g.stroke();
+    });
+  }
+}
+
+/* ── the page's components, in manifest order ─────────────────────────── */
+function drawCover(x, y, w, k){
+  clipTo(x, y - 2, w, 60 * k + 2, () => {
+    box(x, y, w, 3.5, Q.teal);
+    box(x, y + 12, 24, 2, Q.teal);
+    box(x, y + 20, w * .76, 5.4, Q.navy);
+    box(x, y + 29, w * .5, 5.4, Q.navy);
+    box(x, y + 40, w, 1, Q.navy);
+    box(x, y + 45, w * .46, 2.2, Q.gold);
+    box(x + w * .46, y + 45, w * .54, 2.2, Q.mint);
+    box(x, y + 53, w * .86, 1.5, Q.rule);
+    box(x, y + 57.5, w * .58, 1.5, Q.rule);
+  });
+}
+function drawMetaTable(x, y, w, k){
+  clipTo(x, y, w, 22 * k, () => {
+    strokeRR(x + .5, y + .5, w - 1, 19, 0, Q.rule, 1);
+    hair(x, y + 10, x + w, y + 10, Q.rule, 1);
+    hair(x + w * .44, y, x + w * .44, y + 20, Q.rule, 1);
+    box(x, y + 1, 1.6, 18, Q.gold);
+    box(x + 5, y + 4, 24, 1.6, Q.mute);
+    box(x + 5, y + 14, 19, 1.6, Q.mute);
+    box(x + w - 5 - 38, y + 4, 38, 1.6, Q.navy);
+    box(x + w - 5 - 27, y + 14, 27, 1.6, Q.navy);
+  });
+}
+function drawBody(x, y, w, k){
+  clipTo(x, y - 2, w, 42 * k + 2, () => {
+    box(x, y, w * .4, 3.6, Q.navy);
+    for (let r = 0; r < 6; r++)
+      box(x, y + 11 + r * 4.9, w * [1, .96, 1, .91, 1, .5][r], 1.4, Q.rule);
+  });
+}
+function drawTable(x, y, w, k){
+  const ch = 5.6, rows = 5;
+  clipTo(x, y - 8, w, (8 + ch * rows) * k + 8, () => {
+    box(x, y - 8, w * .28, 3, Q.teal);                       // table caption rule
+    box(x, y, w, ch, Q.navy);
+    for (let r = 1; r < rows; r++) box(x, y + r * ch, w, ch, r % 2 ? Q.mint : Q.paper);
+    g.strokeStyle = Q.rule; g.lineWidth = .7;
+    g.beginPath();
+    for (let c = 1; c < 5; c++){ g.moveTo(x + c * w / 5, y); g.lineTo(x + c * w / 5, y + ch * rows); }
+    for (let r = 1; r < rows; r++){ g.moveTo(x, y + r * ch); g.lineTo(x + w, y + r * ch); }
+    g.stroke();
+    strokeRR(x + .5, y + .5, w - 1, ch * rows - 1, 0, Q.rule, 1);
+  });
+}
+function drawFigure(x, y, w, k){
+  clipTo(x, y, w, 30 * k, () => {
+    strokeRR(x + .5, y + .5, w - 1, 20, 1, Q.rule, 1);
+    clipTo(x + 1, y + 1, w - 2, 19, () => {
+      g.strokeStyle = Q.mute; g.globalAlpha *= .5; g.lineWidth = 1;
+      g.beginPath();
+      g.moveTo(x + 5, y + 17); g.lineTo(x + w * .28, y + 6);
+      g.lineTo(x + w * .54, y + 13); g.lineTo(x + w - 5, y + 4);
+      g.stroke();
+    });
+    box(x, y + 25, w * .58, 1.6, Q.mute);                    // caption
+  });
+}
+
+/* Furniture and the TOC — where field finalization actually shows. */
+function drawFurniture(x, y, w, h, k, fieldK){
+  at(k, () => {
+    hair(x, y + 10, x + w, y + 10, Q.rule, 1);               // running header
+    box(x, y + 3, 30, 2, Q.mute);
+    hair(x, y + h - 20, x + w, y + h - 20, Q.rule, 1);       // folio rule
+    box(x + w / 2 - 6, y + h - 15, 12, 2, Q.mute);
+    hair(x, y + 110, x + w, y + 110, Q.rule, 1);             // section boundary
+  });
+  for (let r = 0; r < 3; r++){
+    at(cl(k * 3 - r), () => {
+      const yy = y + 118 + r * 9;
+      box(x, yy, w * [.48, .6, .4][r], 2, Q.navy);
+      g.save();
+      g.strokeStyle = Q.rule; g.lineWidth = 1; g.setLineDash([1, 2.6]);
+      g.beginPath();
+      g.moveTo(x + w * [.52, .64, .44][r] + 2, yy + 1); g.lineTo(x + w - 11, yy + 1);
+      g.stroke();
+      g.restore();
+      // a PAGEREF result only exists after Word has run
+      if (fieldK > (r + .4) / 3.4) box(x + w - 8, yy, 8, 2, Q.teal);
+      else                          box(x + w - 5, yy, 3, 2, Q.faint);
+    });
+  }
+}
+
+function drawPage(x, y, w, h, prog, raw, guideK, furnK, fieldK){
+  const px = x + 14, pw = w - 28;
+  // the slots the profile has already declared, still waiting to be filled
+  for (let i = 0; i < 4; i++){
+    at(guideK * (1 - raw[i]) * .5, () => {
+      g.save();
+      g.strokeStyle = Q[SOURCES[i].col]; g.lineWidth = 1; g.setLineDash([2, 3.5]);
+      g.strokeRect(px + .5, y + COMP[i].y + .5, pw - 1, COMP[i].h - 1);
+      g.restore();
+    });
+  }
+  // the component tag each block carries, shown as a margin tick
+  for (let i = 0; i < 4; i++){
+    if (prog[i] <= 0) continue;
+    const c = COMP[i];
+    at(prog[i] * .85, () => box(x + 6, y + c.y, 2, c.h * prog[i], Q[SOURCES[i].col]));
+  }
+  if (prog[2] > 0){
+    drawCover(px, y + COMP[2].y, pw, cl(prog[2] * 1.7));
+    drawMetaTable(px, y + COMP[2].y + 68, pw, cl(prog[2] * 2.2 - 1.2));
+  }
+  if (prog[0] > 0) drawBody(px, y + COMP[0].y, pw, prog[0]);
+  if (prog[1] > 0) drawTable(px, y + COMP[1].y, pw, prog[1]);
+  if (prog[3] > 0) drawFigure(px, y + COMP[3].y, pw, prog[3]);
+  drawFurniture(px, y, pw, h, furnK, fieldK);
+}
+
+/* A rendered page image, small enough to be a texture and specific enough to read. */
+function drawThumb(i, x, y, w, h){
+  fillRR(x, y, w, h, 1.5, Q.paper);
+  strokeRR(x + .5, y + .5, w - 1, h - 1, 1.5, Q.edge, 1);
+  const ix = x + 4, iy = y + 5, iw = w - 8;
+  if (i === 0){                                   // the cover
+    box(ix, iy, iw, 1.8, Q.teal);
+    box(ix, iy + 6, iw * .78, 3, Q.navy);
+    box(ix, iy + 11, iw * .5, 3, Q.navy);
+    box(ix, iy + 17, iw * .44, 1.6, Q.gold);
+    box(ix + iw * .44, iy + 17, iw * .56, 1.6, Q.mint);
+    for (let r = 0; r < 3; r++) box(ix, iy + 23 + r * 3, iw * [.9, .7, .5][r], 1.1, Q.rule);
+    box(ix, iy + 34, iw, 5, Q.mint);
+  } else if (i === 3 || i === 8){                  // a table page
+    box(ix, iy, iw * .6, 1.8, Q.navy);
+    box(ix, iy + 6, iw, 3.2, Q.navy);
+    for (let r = 1; r < 7; r++) box(ix, iy + 6 + r * 3.2, iw, 3.2, r % 2 ? Q.mint : Q.paper);
+    strokeRR(ix + .5, iy + 6.5, iw - 1, 3.2 * 7 - 1, 0, Q.rule, .8);
+    for (let r = 0; r < 3; r++) box(ix, iy + 34 + r * 3, iw * [.95, .8, .6][r], 1.1, Q.rule);
+  } else if (i === 6){                             // a figure page
+    box(ix, iy, iw * .55, 1.8, Q.navy);
+    strokeRR(ix + .5, iy + 6.5, iw - 1, 15, 1, Q.rule, .8);
+    g.save(); g.globalAlpha *= .45;
+    hair(ix + 2, iy + 19, ix + iw * .4, iy + 10, Q.mute, 1);
+    hair(ix + iw * .4, iy + 10, ix + iw - 2, iy + 14, Q.mute, 1);
+    g.restore();
+    box(ix, iy + 25, iw * .6, 1.1, Q.mute);
+    for (let r = 0; r < 3; r++) box(ix, iy + 31 + r * 3, iw * [.95, .85, .55][r], 1.1, Q.rule);
+  } else {                                         // prose
+    box(ix, iy, iw * [.6, .45, .7, .5][i % 4], 2.4, Q.navy);
+    for (let r = 0; r < 11; r++){
+      const wr = [1, .93, 1, .82, .97, 1, .74, .95, 1, .88, .55][(r + i) % 11];
+      box(ix, iy + 6 + r * 3.1, iw * wr, 1.1, Q.rule);
+    }
+  }
+  box(x + w / 2 - 3, y + h - 5, 6, 1.2, Q.faint);  // folio
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+function frame(t){
+  t = ((t % LOOP) + LOOP) % LOOP;
+  drawScaffold();
+
+  /* 1 — sources materialize */
+  for (let i = 0; i < L.src.n; i++){
+    const [a, b] = stagger(i, B.card[0], B.card[1], L.src.n, .75);
+    const k = eo(a, b, t);
+    at(k * wipe(t, L.src.x + L.src.w), () => cardTexture(i, k));
+  }
+
+  /* 2 — routes light */
+  drawRails(t, false);
+
+  /* 3 — ownership travels; each landing builds its component */
+  const prog = [0, 0, 0, 0], raw = [0, 0, 0, 0];
+  const docFade = wipe(t, L.doc.x + L.doc.w);
+  for (let i = 0; i < L.src.n; i++){
+    const [a, b] = stagger(SOURCES[i].ord, B.token[0], B.token[1], L.src.n, 1.35);
+    const k = lin(a, b, t);
+    if (k > 0 && k < 1){
+      const p = railPath(i), q = tracePath(p, ei(a, b, t));
+      at(wipe(t, q.x), () => {
+        g.fillStyle = P[SOURCES[i].col];
+        g.fillRect(q.x - 3.5, q.y - 3.5, 7, 7);
+        g.globalAlpha *= .22;
+        g.fillRect(q.x - 11, q.y - 1.5, 11, 3);
+      });
+    }
+    raw[i] = eo(0, 1, cl((k - .80) / .20));
+    prog[i] = raw[i] * docFade;
+  }
+
+  const furnK  = eo(B.furn[0], B.furn[1], t) * docFade;
+  const fieldK = ei(B.field[0], B.field[1], t);
+  const guideK = sm(0.85, 1.70, t);
+  at(docFade, () => drawPage(L.doc.x, L.doc.y, L.doc.w, L.doc.h,
+                             prog, raw, guideK, furnK, fieldK * docFade));
+
+  /* 4 — Word finalization: a scan down the saved document */
+  if (t > B.field[0] && t < B.field[1] + .12){
+    const k = lin(B.field[0], B.field[1], t);
+    const sy = L.doc.y + 5 + (L.doc.h - 10) * k;
+    at((1 - Math.pow(Math.abs(k * 2 - 1), 3)) * docFade, () => {
+      const grd = g.createLinearGradient(0, sy - 20, 0, sy + 2);
+      grd.addColorStop(0, "rgba(30,122,120,0)");
+      grd.addColorStop(1, "rgba(30,122,120,.15)");
+      g.fillStyle = grd;
+      g.fillRect(L.doc.x + 1, sy - 20, L.doc.w - 2, 22);
+      box(L.doc.x + 1, sy, L.doc.w - 2, 1.4, Q.teal);
+    });
+  }
+
+  /* 5 — export: the transfer from the saved document to the rendered pages */
+  const pdfK = ei(B.pdf[0], B.pdf[1], t);
+  if (pdfK > 0 && pdfK < 1){
+    const y = L.thumb.y + L.thumb.h + L.thumb.gy / 2;
+    const tx = mix(L.doc.x + L.doc.w + 4, L.out.x - 4, pdfK);
+    at(Math.sin(pdfK * Math.PI) * wipe(t, tx), () => {
+      hair(L.doc.x + L.doc.w + 4, y, tx, y, P.teal, 1.3);
+      g.fillStyle = P.teal;
+      g.beginPath();
+      g.moveTo(tx + 6, y); g.lineTo(tx - 2, y - 4); g.lineTo(tx - 2, y + 4);
+      g.fill();
+    });
+  }
+
+  /* 6 — every page rendered */
+  for (let i = 0; i < L.thumb.n; i++){
+    const p = thumbPos(i);
+    const [a, b] = stagger(i, B.page[0], B.page[1], L.thumb.n, .32);
+    const k = eo(a, b, t) * wipe(t, p.x + L.thumb.w);
+    at(k, () => drawThumb(i, p.x, p.y, L.thumb.w, L.thumb.h));
+  }
+  at(eo(B.page[1] - .35, B.page[1] + .2, t) * wipe(t, L.out.x + L.out.w), () => {
+    txt("12 / 12 PAGES RENDERED", L.thumb.x, 172, { f: "u", s: 9, w: 600, ls: .1, c: P.mute });
+  });
+  hair(L.out.x, 182.5, L.out.x + L.out.w, 182.5, P.rule, 1);
+
+  /* 7 — the ledger closes */
+  const rows = ledgerRows();
+  rows.forEach((r, i) => {
+    const [a, b] = stagger(i, B.proof[0], B.proof[1], rows.length, .34);
+    at(eo(a, b, t) * wipe(t, r.x + 100), () => {
+      fillRR(r.x + .5, r.y + .5, 11, 11, 1.5, P.teal);
+      g.strokeStyle = P.paper; g.lineWidth = 1.7; g.lineCap = "round"; g.lineJoin = "round";
+      g.beginPath();
+      g.moveTo(r.x + 3, r.y + 6); g.lineTo(r.x + 5.3, r.y + 8.5); g.lineTo(r.x + 9, r.y + 3.5);
+      g.stroke();
+      txt(r.label, r.x + 18, r.y + 9.5, { f: "u", s: 9, w: 600, ls: .03, c: P.ink });
+    });
+  });
+
+  const hashK = eo(B.proof[0] + .75, B.proof[1], t);
+  at(hashK * wipe(t, L.out.x + L.out.w), () => {
+    txt("sha256", L.out.x, 298, { f: "u", s: 8.5, w: 600, ls: .1, c: P.faint });
+    const target = "9f2c4a71b8e0", settled = Math.floor(hashK * 13);
+    let s = "";
+    for (let i = 0; i < target.length; i++)
+      s += i < settled ? target[i] : "0123456789abcdef"[Math.floor(rnd(i * 5 + Math.floor(t * 26)) * 16)];
+    txt(s, L.out.x + 42, 298, { f: "m", s: 10, w: 500, c: P.teal });
+    at(cl(hashK * 4 - 3), () => {
+      fillRR(L.out.x, 312, 98, 21, 2, P.navy);
+      txt("BUILD PROVEN", L.out.x + 49, 326,
+          { f: "u", s: 9, w: 700, ls: .11, c: P.onDark, a: "center" });
+      txt("immutable · reproducible", L.out.x + 108, 326, { f: "i", s: 12, c: P.mute });
+    });
+  });
+
+  /* 8 — the stage rail: where the build is right now */
+  const S = L.stage, span = (S.x2 - S.x) / STAGES.length;
+  const marks = [B.card[0], B.token[0], B.furn[0], B.field[0], B.pdf[0], B.page[0], B.proof[0], B.clear[0]];
+  let active = -1;
+  for (let i = 0; i < STAGES.length; i++) if (t >= marks[i]) active = i;
+  STAGES.forEach((s, i) => {
+    const x = S.x + i * span;
+    const done = i < active, now = i === active;
+    if (!done && !now) return;
+    const k = wipe(t, x + span);
+    if (k <= 0) return;
+    txt(s, x, S.label, { f: "u", s: 9, w: now && k > .5 ? 700 : 500, ls: .11,
+                         c: mixHex(P.faint, now ? P.teal : P.mute, k) });
+    const next = marks[i + 1] === undefined ? LOOP : marks[i + 1];
+    at(k, () => box(x, S.y - 3, now ? span * lin(marks[i], next, t) : span, 3,
+                    now ? P.teal : P.rule));
+  });
+
+  /* 9 — the clearing edge */
+  if (t > B.clear[0] && t < B.clear[1]){
+    const edge = mix(W + 70, L.src.x - 40, ei(B.clear[0], B.clear[1], t));
+    const grd = g.createLinearGradient(edge - 46, 0, edge + 24, 0);
+    grd.addColorStop(0, "rgba(30,122,120,0)");
+    grd.addColorStop(.74, "rgba(30,122,120,.11)");
+    grd.addColorStop(1, "rgba(30,122,120,0)");
+    g.fillStyle = grd;
+    g.fillRect(edge - 46, 30, 70, H - 70);
+  }
+}
+
+/* ── driver ────────────────────────────────────────────────────────────── */
+function render(t){
+  g.setTransform(DPU, 0, 0, DPU, 0, 0);
+  frame(t);
+}
+
+window.__setTheme = n => { P = THEMES[n] || THEMES.light; };
+window.__setScale = k => sizeTo(k);
+window.__step = t => render(t);
+window.__LOOP = LOOP;
+
+Promise.all([
+  document.fonts.load("620 54px Display"),
+  document.fonts.load("400 17px TextIt"),
+  document.fonts.load("600 11px UI"),
+  document.fonts.load("700 9px UI"),
+  document.fonts.load("500 10px Mono")
+]).then(() => document.fonts.ready).then(() => {
+  window.__ready = true;
+  if (window.__manual) render(0); else loop();
+});
+
+const t0 = performance.now();
+function loop(){ render((performance.now() - t0) / 1000); requestAnimationFrame(loop); }
+</script>

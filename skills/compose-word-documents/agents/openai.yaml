@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compose Word Documents"
+  short_description: "Build and verify native Word and PDF documents"
+  default_prompt: "Use $compose-word-documents to edit canonical sources, run the smallest relevant proof, and produce a verified Word/PDF document pair."

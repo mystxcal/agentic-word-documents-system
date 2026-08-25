@@ -1,0 +1,24 @@
+{
+  "$schema": "../../schemas/agentic-profile-v2.schema.json",
+  "schema": "agentic-profile/v2",
+  "id": "handbook",
+  "shell": "shell.docx",
+  "body_slot": "AGDOC.BODY.HANDBOOK",
+  "region_starts": {
+    "main": {
+      "tag": "AGDOC.LAYOUT.MAIN_START",
+      "boundary": "next_page"
+    }
+  },
+  "field_bindings": {
+    "AGDOC.FIELD.COVER.KICKER": {"path": "metadata.type", "transform": "upper", "required": true},
+    "AGDOC.FIELD.COVER.TITLE": {"path": "metadata.title", "required": true},
+    "AGDOC.FIELD.COVER.SUBTITLE": {"path": "metadata.description", "required": false},
+    "AGDOC.FIELD.COVER.AUTHOR": {"path": "metadata.author", "required": false},
+    "AGDOC.FIELD.COVER.DATE": {"path": "metadata.date", "date_format": "%B %Y", "required": true},
+    "AGDOC.FIELD.HEADER.TITLE": {"path": "metadata.short_title", "required": true},
+    "AGDOC.FIELD.FOOTER.COLLECTION": {"path": "project.name", "required": true},
+    "AGDOC.FIELD.FOOTER.VERSION": {"path": "metadata.revision", "required": true}
+  },
+  "release_gates": ["content-reviewed", "visual-proof-reviewed"]
+}

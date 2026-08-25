@@ -1,0 +1,56 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "$Schema"
+    },
+    "schema": {
+      "const": "agentic-kit/v2",
+      "title": "Schema",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "components": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Components",
+      "type": "object"
+    },
+    "semantic_styles": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Semantic Styles",
+      "type": "object"
+    },
+    "table_styles": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Table Styles",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "components"
+  ],
+  "title": "Agentic style-kit manifest V2",
+  "type": "object",
+  "$id": "agentic-kit-v2.schema.json"
+}

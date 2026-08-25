@@ -1,0 +1,12 @@
+{
+  "$schema": "../../schemas/agentic-project-v2.schema.json",
+  "schema": "agentic-project/v2",
+  "id": "field-study",
+  "name": "Open Field Notes",
+  "description": "Neutral sample collection for observation-led reports.",
+  "metadata": {
+    "kind": "sample",
+    "audience": "learners and independent researchers"
+  },
+  "sources": {}
+}
